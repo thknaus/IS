@@ -1,0 +1,10 @@
+1 6 Bus
+1 5 U_Bahn
+2 1 Taxi
+2 6 Bus
+3 2 Bus
+4 2 U_Bahn
+4 3 Bus
+5 4 Taxi
+5 3 U_Bahn
+6 5 Taxi
