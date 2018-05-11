@@ -4,6 +4,11 @@ EDGELIST_FILE = './edgelist.txt'
 NODELIST = []
 EDGELIST = []
 
+# Vehicle weights
+U_Bahn = 1
+Taxi = 2
+Bus = 3
+
 
 # Node object with a integer as name
 class Node(object):
@@ -70,6 +75,12 @@ def create_edges():
         EDGELIST.append(Edge(int(l[0]), int(l[1]), l[2]))
 
 
+def bfs(graph, start, end):
+    print(graph)
+    print(start)
+    print(end)
+
+
 def main():
     # Create nodes
     create_nodes()
@@ -77,7 +88,8 @@ def main():
     create_edges()
     # Create graph
     g = Graph()
-    print(g)
+
+    bfs(g, NODELIST[0], NODELIST[5])
 
 
 if __name__ == "__main__":
