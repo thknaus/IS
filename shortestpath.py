@@ -25,18 +25,6 @@ class Node(object):
         self.name = x
         self.visited = False
         self.priority = 99
-<<<<<<< HEAD
-=======
-
-    def get_visited():
-        return self.visited
-
-    def set_visited(v):
-        self.visited = v
-
-    def set_priority(p):
-        self.priority = p
->>>>>>> 9f8d76a2f5671f18f34c75370206d5fe41359c90
 
     def get_visited():
         return self.visited
@@ -50,11 +38,7 @@ class Node(object):
     def _str_(self):
         return str(self.name)
 
-<<<<<<< HEAD
-    def _cmp_(self, other):
-=======
     def __cmp__(self, other):
->>>>>>> 9f8d76a2f5671f18f34c75370206d5fe41359c90
         return cmp(self.priority, other.priority)
 
 
@@ -127,11 +111,7 @@ def find_path(graph, start, end, path=[]):
             break
         else:
             import pdb; pdb.set_trace()
-<<<<<<< HEAD
             child_list = graph[u.name]
-=======
-            child_list = graph[u]
->>>>>>> 9f8d76a2f5671f18f34c75370206d5fe41359c90
             print(child_list)
             for v in child_list:
                 if not v.get_visited:
@@ -140,7 +120,6 @@ def find_path(graph, start, end, path=[]):
                     pq.put(v)
         break
     print("Hab's diggi")
-
 
 
 def get_weight(u, v):
@@ -167,14 +146,6 @@ def main():
     bfs(g, NODELIST[0], NODELIST[5])
     print("Graph")
     print(g)
-<<<<<<< HEAD
-=======
-
-
-
-
-
->>>>>>> 9f8d76a2f5671f18f34c75370206d5fe41359c90
 
 
 if __name__ == "__main__":
