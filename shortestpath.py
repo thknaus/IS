@@ -1,6 +1,8 @@
 NODELIST_FILE = './nodelist.txt'
 EDGELIST_FILE = './edgelist.txt'
 
+import sys
+
 try:
     import Queue as Q  # ver. < 3.0
 except ImportError:
@@ -14,9 +16,9 @@ EDGELIST = []
 GRAPH = {}
 
 # Vehicle weights
-U_Bahn = 1
-Taxi = 5
-Bus = 10
+UBAHN = 1
+TAXI = 5
+BUS = 10
 
 
 # Node object with a integer as name
@@ -26,13 +28,7 @@ class Node(object):
         self.visited = False
         self.priority = 99
 
-    def get_visited():
-        return self.visited
-
-    def set_visited(v):
-        self.visited = v
-
-    def set_priority(p):
+    def set_priority(self, p):
         self.priority = p
 
     def _str_(self):
@@ -47,7 +43,12 @@ class Edge(object):
     def __init__(self, node1, node2, vehicle):
         self.node1 = node1
         self.node2 = node2
-        self.vehicle = vehicle
+        if vehicle == 'Bus':
+            self.vehicle = BUS
+        elif vehicle == 'U_Bahn':
+            self.vehicle = UBAHN
+        elif vehicle == 'Taxi':
+            self.vehicle = TAXI
 
     def __str__(self):
         edge = '(' + str(self.node1) + ', ' + str(self.node2) + ', ' + str(self.vehicle) + ')'
@@ -57,11 +58,11 @@ class Edge(object):
 def init_graph():
     for n in NODELIST:
         for e in EDGELIST:
-            if n.name == e.node1:
-                if n.name in GRAPH:
-                    GRAPH[n.name].append(e.node2)
+            if n.name == e.node1.name:
+                if n in GRAPH:
+                    GRAPH[n].append(e.node2)
                 else:
-                    GRAPH[n.name] = [e.node2]
+                    GRAPH[n] = [e.node2]
 
 
 def create_nodes():
@@ -88,38 +89,38 @@ def create_edges():
         for y in NODELIST:
             if y.name == int(l[1]):
                 n2 = y
-        EDGELIST.append(Edge(int(l[0]), int(l[1]), l[2]))
+        EDGELIST.append(Edge(n1, n2, l[2]))
 
 
 def bfs(graph, start, end):
-    print(graph)
-    print(start)
-    print(end)
+    print(start.name)
+    print(end.name)
     insert_start(start)
     find_path(graph, start, end)
 
 
 def insert_start(start):
     pq.put(start)
-    print("Insert PriorityQueue")
+    print("Visit start node: " + str(start.name) + " and add to PriorityQueue")
 
 
 def find_path(graph, start, end, path=[]):
     while not pq.empty():
         u = pq.get(0)
-        if u == end:
+        if u.name == end.name:
             break
         else:
-            import pdb; pdb.set_trace()
-            child_list = graph[u.name]
-            print(child_list)
+            child_list = graph[u]
+            print("Current node: " + str(u.name))
             for v in child_list:
-                if not v.get_visited:
+                if not v.visited:
+                    print("Visit child node: " + str(v.name) + " from parent node: " + str(u.name))
+                    if v is end:
+                        print("Found end node: " + str(v.name) + " as child of node: " + str(u.name))
+                        sys.exit(0)
                     v.set_priority(get_weight(u, v))
-                    v.set_visited(True)
+                    v.visited = True
                     pq.put(v)
-        break
-    print("Hab's diggi")
 
 
 def get_weight(u, v):
@@ -137,15 +138,7 @@ def main():
     init_graph()
     g = GRAPH
 
-    print("EdgeList")
-    for y in EDGELIST:
-        print(y)
-    print("NodeList")
-    for x in NODELIST:
-        print(x)
-    bfs(g, NODELIST[0], NODELIST[5])
-    print("Graph")
-    print(g)
+    bfs(g, NODELIST[0], NODELIST[1])
 
 
 if __name__ == "__main__":
