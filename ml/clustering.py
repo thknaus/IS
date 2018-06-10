@@ -64,16 +64,17 @@ class Point(object):
 
 
 def closestNeighborAlgo(m_size, dataset, r):
+    global RANGE
     RANGE = r
 
     # Create matrix
-    matrix = np.zeros(shape=(m_size+1, m_size+1), dtype=Point)
+    matrix = np.zeros(shape=(m_size, m_size), dtype=Point)
 
     global MATRIX_LENGTH_X
-    MATRIX_LENGTH_X = m_size+1
+    MATRIX_LENGTH_X = m_size
 
     global MATRIX_LENGTH_Y
-    MATRIX_LENGTH_Y = m_size+1
+    MATRIX_LENGTH_Y = m_size
 
     for i in dataset:
         matrix[i[0]][i[1]] = Point(0, i[0], i[1])
@@ -82,14 +83,15 @@ def closestNeighborAlgo(m_size, dataset, r):
 
 
 def check(matrix, size):
+    print(range(size))
     for y in range(size):
         for x in range(size):
             if isinstance(matrix[x][y], Point):
                 setCluster(matrix[x][y])
-                import pdb; pdb.set_trace()
-                neighborsFunction = getNeighbors(2)
+                neighborsFunction = getNeighbors(RANGE)
                 out = neighborsFunction(x, y)
                 print(out)
+                print(x, y)
 
 
 def getNeighbors(r):
@@ -113,7 +115,7 @@ def setCluster(point):
 def main():
     X = generateSampleData(2, 0, 3)
 
-    closestNeighborAlgo(3, X, 1)
+    closestNeighborAlgo(4, X, 1)
 
     # SPECTRAL
     spectral = SpectralClustering(n_clusters=2, eigen_solver='arpack')
