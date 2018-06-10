@@ -87,20 +87,20 @@ def check(matrix, size):
             if isinstance(matrix[x][y], Point):
                 setCluster(matrix[x][y])
                 import pdb; pdb.set_trace()
-                neighborsFunction = getNeighbors()
+                neighborsFunction = getNeighbors(2)
                 out = neighborsFunction(x, y)
                 print(out)
 
 
-def getNeighbors():
+def getNeighbors(r):
     return lambda x, y: [(x2, y2)
-            for x2 in range(x-1, x+2)
-                for y2 in range(y-1, y+2)
-                    if (-1 < x <= MATRIX_LENGTH_X and
-                        -1 < y <= MATRIX_LENGTH_Y and
+            for x2 in range(x - r - 1, x+r+1)
+                for y2 in range(y - r - 1, y+r+1)
+                    if (-1 < x < MATRIX_LENGTH_X and
+                        -1 < y < MATRIX_LENGTH_Y and
                         (x != x2 or y != y2) and
-                        (0 <= x2 <= MATRIX_LENGTH_X) and
-                        (0 <= y2 <= MATRIX_LENGTH_Y))]
+                        (0 <= x2 < MATRIX_LENGTH_X) and
+                        (0 <= y2 < MATRIX_LENGTH_Y))]
 
 
 def setCluster(point):
@@ -111,9 +111,9 @@ def setCluster(point):
 
 
 def main():
-    X = generateSampleData(2, 0, 1)
+    X = generateSampleData(2, 0, 3)
 
-    closestNeighborAlgo(1, X, 1)
+    closestNeighborAlgo(3, X, 1)
 
     # SPECTRAL
     spectral = SpectralClustering(n_clusters=2, eigen_solver='arpack')
