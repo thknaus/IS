@@ -12,6 +12,9 @@ from sklearn.preprocessing import StandardScaler
 from itertools import cycle, islice
 from random import randint
 
+CLUSTER_COUNTER = 0
+RANGE = 0
+
 
 def plot_dataset(X, y_pred=[0], quantile=.3, n_neighbors=10, fname=None):
     # normalize dataset for easier parameter selection
@@ -48,23 +51,92 @@ def generateSampleData(item_number, min_value, max_value):
     return list
 
 
-def closestNeighborAlgo(m_size, dataset, range):
+class Point(object):
+    def __init__(self, cluster, x, y):
+        self.cluster = cluster
+        self.x = x
+        self.y = y
 
-    for i in range(5):
-        print(i)
+    def _str_(self):
+        return str(self.cluster)
+
+
+def closestNeighborAlgo(m_size, dataset, r):
+    RANGE = r
+
     # Create matrix
-    matrix = np.zeros(shape=(m_size+1, m_size+1))
+    matrix = np.zeros(shape=(m_size+1, m_size+1), dtype=Point)
     for i in dataset:
-        matrix[i[0]][i[1]] = 1
-    size = m_size + 1
+        matrix[i[0]][i[1]] = Point(0, i[0], i[1])
+
+    check(matrix, m_size)
 
 
+def check(matrix, size):
+    for y in range(size):
+        for x in range(size):
+            if isinstance(matrix[x][y], Point):
+                setCluster(matrix[x][y])
+                import pdb; pdb.set_trace()
+                out = nei(matrix, x, y, 1)
+                import pdb; pdb.set_trace()
+                print(out)
+                #goToNeighbours(matrix, matrix[x][y])
+
+
+def nei(mat, row, col, radius=1):
+    rows, cols = len(mat), len(mat[0])
+    out = []
+
+    for i in xrange(row - radius - 1, row + radius):
+        row = []
+        for j in xrange(col - radius - 1, col + radius):
+
+            if 0 <= i < rows and 0 <= j < cols:
+
+                if isinstance(mat[i][j], Point) and mat[i][j].cluster is 0:
+                    row.append(mat[i][j])
+
+        out.append(row)
+
+    return out
+
+
+def in_bounds(matrix, row, col):
+    if row < 0 or col < 0:
+        return False
+    if row > len(matrix)-1 or col > len(matrix)-1:
+        return False
+    return True
+
+
+def neighbors(matrix, radius, rowNumber, colNumber):
+    out = []
+    for row in range(radius):
+        print(row)
+        for col in range(radius):
+            print(col)
+            if in_bounds(matrix, rowNumber+row, colNumber+col):
+                print("in_bounds")
+                import pdb; pdb.set_trace()
+                if isinstance(matrix[rowNumber+row][colNumber+col], Point):
+                    print("isntance")
+                    if matrix[rowNumber+row][colNumber+col].cluster is 0:
+                        out.append([rowNumber+row][colNumber+col])
+    return out
+
+
+def setCluster(point):
+    if point.cluster == 0:
+        global CLUSTER_COUNTER
+        CLUSTER_COUNTER += 1
+        point.cluster = CLUSTER_COUNTER
 
 
 def main():
-    X = generateSampleData(10, 0, 10)
-    print(X)
-    closestNeighborAlgo(10, X, 1)
+    X = generateSampleData(2, 0, 1)
+
+    closestNeighborAlgo(1, X, 1)
 
     # SPECTRAL
     spectral = SpectralClustering(n_clusters=2, eigen_solver='arpack')
