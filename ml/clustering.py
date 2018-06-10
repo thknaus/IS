@@ -14,6 +14,8 @@ from random import randint
 
 CLUSTER_COUNTER = 0
 RANGE = 0
+MATRIX_LENGTH_X = 0
+MATRIX_LENGTH_Y = 0
 
 
 def plot_dataset(X, y_pred=[0], quantile=.3, n_neighbors=10, fname=None):
@@ -66,6 +68,13 @@ def closestNeighborAlgo(m_size, dataset, r):
 
     # Create matrix
     matrix = np.zeros(shape=(m_size+1, m_size+1), dtype=Point)
+
+    global MATRIX_LENGTH_X
+    MATRIX_LENGTH_X = m_size+1
+
+    global MATRIX_LENGTH_Y
+    MATRIX_LENGTH_Y = m_size+1
+
     for i in dataset:
         matrix[i[0]][i[1]] = Point(0, i[0], i[1])
 
@@ -78,52 +87,20 @@ def check(matrix, size):
             if isinstance(matrix[x][y], Point):
                 setCluster(matrix[x][y])
                 import pdb; pdb.set_trace()
-                out = nei(matrix, x, y, 1)
-                import pdb; pdb.set_trace()
+                neighborsFunction = getNeighbors()
+                out = neighborsFunction(x, y)
                 print(out)
-                #goToNeighbours(matrix, matrix[x][y])
 
 
-def nei(mat, row, col, radius=1):
-    rows, cols = len(mat), len(mat[0])
-    out = []
-
-    for i in xrange(row - radius - 1, row + radius):
-        row = []
-        for j in xrange(col - radius - 1, col + radius):
-
-            if 0 <= i < rows and 0 <= j < cols:
-
-                if isinstance(mat[i][j], Point) and mat[i][j].cluster is 0:
-                    row.append(mat[i][j])
-
-        out.append(row)
-
-    return out
-
-
-def in_bounds(matrix, row, col):
-    if row < 0 or col < 0:
-        return False
-    if row > len(matrix)-1 or col > len(matrix)-1:
-        return False
-    return True
-
-
-def neighbors(matrix, radius, rowNumber, colNumber):
-    out = []
-    for row in range(radius):
-        print(row)
-        for col in range(radius):
-            print(col)
-            if in_bounds(matrix, rowNumber+row, colNumber+col):
-                print("in_bounds")
-                import pdb; pdb.set_trace()
-                if isinstance(matrix[rowNumber+row][colNumber+col], Point):
-                    print("isntance")
-                    if matrix[rowNumber+row][colNumber+col].cluster is 0:
-                        out.append([rowNumber+row][colNumber+col])
-    return out
+def getNeighbors():
+    return lambda x, y: [(x2, y2)
+            for x2 in range(x-1, x+2)
+                for y2 in range(y-1, y+2)
+                    if (-1 < x <= MATRIX_LENGTH_X and
+                        -1 < y <= MATRIX_LENGTH_Y and
+                        (x != x2 or y != y2) and
+                        (0 <= x2 <= MATRIX_LENGTH_X) and
+                        (0 <= y2 <= MATRIX_LENGTH_Y))]
 
 
 def setCluster(point):
