@@ -62,6 +62,9 @@ class Point(object):
     def _str_(self):
         return str(self.cluster)
 
+    def __getitem__(self):
+        return self
+
 
 def closestNeighborAlgo(m_size, dataset, r):
     global RANGE
@@ -83,15 +86,38 @@ def closestNeighborAlgo(m_size, dataset, r):
 
 
 def check(matrix, size):
-    print(range(size))
     for y in range(size):
         for x in range(size):
             if isinstance(matrix[x][y], Point):
                 setCluster(matrix[x][y])
-                neighborsFunction = getNeighbors(RANGE)
-                out = neighborsFunction(x, y)
-                print(out)
-                print(x, y)
+                recursivUpdateNeighbors(matrix, x, y)
+                # neighborsFunction = getNeighbors(RANGE)
+                # out = neighborsFunction(x, y)
+                # print(out)
+                # print(x, y)
+                # neighborPoints = getNeighborsPoint(matrix, out)
+
+
+def recursivUpdateNeighbors(matrix, x, y):
+    neighborsFunction = getNeighbors(RANGE)
+    out = neighborsFunction(x, y)
+    neighbors = getNeighborsPoint(matrix, out)
+
+    print(x, y)
+    print(neighbors)
+    for n in neighbors:
+        print(n.x, n.y)
+        recursivUpdateNeighbors(matrix, n.x, n.y)
+
+
+def getNeighborsPoint(matrix, neighbor_list):
+    points = []
+    for n in neighbor_list:
+        p1 = matrix[n[0]][n[1]]
+        if isinstance(p1, Point) and p1.cluster == 0:
+            p1.cluster=CLUSTER_COUNTER
+            points.append(p1)
+    return points
 
 
 def getNeighbors(r):
@@ -115,7 +141,7 @@ def setCluster(point):
 def main():
     X = generateSampleData(2, 0, 3)
 
-    closestNeighborAlgo(4, X, 1)
+    closestNeighborAlgo(4, X, 2)
 
     # SPECTRAL
     spectral = SpectralClustering(n_clusters=2, eigen_solver='arpack')
