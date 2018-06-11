@@ -16,6 +16,8 @@ CLUSTER_COUNTER = 0
 RANGE = 0
 MATRIX_LENGTH_X = 0
 MATRIX_LENGTH_Y = 0
+ITEM_CLUSTER = []
+X_LIST = []
 
 
 def plot_dataset(X, y_pred=[0], quantile=.3, n_neighbors=10, fname=None):
@@ -50,6 +52,8 @@ def generateSampleData(item_number, min_value, max_value):
         inner_list.append(df['x'].iloc[i])
         inner_list.append(df['y'].iloc[i])
         list.append(inner_list)
+    global X_LIST
+    X_LIST = list
     return list
 
 
@@ -72,6 +76,7 @@ def closestNeighborAlgo(m_size, dataset, r):
 
     # Create matrix
     matrix = np.zeros(shape=(m_size, m_size), dtype=Point)
+    MATRIX = matrix
 
     global MATRIX_LENGTH_X
     MATRIX_LENGTH_X = m_size
@@ -96,13 +101,12 @@ def check(matrix, size):
                 # print(out)
                 # print(x, y)
                 # neighborPoints = getNeighborsPoint(matrix, out)
-
+    getYPred(matrix)
 
 def recursivUpdateNeighbors(matrix, x, y):
     neighborsFunction = getNeighbors(RANGE)
     out = neighborsFunction(x, y)
     neighbors = getNeighborsPoint(matrix, out)
-
     print(x, y)
     print(neighbors)
     for n in neighbors:
@@ -132,23 +136,33 @@ def getNeighbors(r):
 
 
 def setCluster(point):
+    print("SetCluster " + str(CLUSTER_COUNTER) + " " + str(point.x) + " " + str(point.y))
     if point.cluster == 0:
         global CLUSTER_COUNTER
         CLUSTER_COUNTER += 1
         point.cluster = CLUSTER_COUNTER
 
 
-def main():
-    X = generateSampleData(2, 0, 3)
+def getYPred(matrix):
+    x_list = X_LIST
+    for x in x_list:
+        point = matrix[x[0]][x[1]]
+        ITEM_CLUSTER.append(point.cluster)
 
-    closestNeighborAlgo(4, X, 2)
+
+def main():
+    X = generateSampleData(90, 0, 200)
+    closestNeighborAlgo(201, X, 7)
+    y_pred = ITEM_CLUSTER
+
 
     # SPECTRAL
-    spectral = SpectralClustering(n_clusters=2, eigen_solver='arpack')
-    spectral.fit(X)
+    #spectral = SpectralClustering(n_clusters=2, eigen_solver='arpack')
+    #spectral.fit(X)
 
-    y_pred = spectral.labels_.astype(np.int)
+    #y_pred = spectral.labels_.astype(np.int)
 
+    #import pdb; pdb.set_trace()
     plot_dataset(X, y_pred)
 
 
